@@ -1,0 +1,17 @@
+{
+  "name": "AIU Talapker — Аймақтық инновациялық университет",
+  "short_name": "AIU Talapker",
+  "description": "Аймақтық инновациялық университетінің талапкерлерге арналған ресми порталы. Мамандықтар, ҰБТ шекті балы, жатақхана және қабылдау.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f1248",
+  "theme_color": "#14176b",
+  "lang": "kk",
+  "icons": [
+    {
+      "src": "https://static.tildacdn.pro/tild6564-6133-4437-b836-643837633137/web-app-manifest-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

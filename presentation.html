@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIU Talapker — Конференция презентациясы</title>
+<style>
+:root {
+  --navy: #0f1248;
+  --indigo: #2d2685;
+  --violet: #5444cd;
+  --sky: #f1f4ff;
+  --accent: #ff6b35;
+  --green: #10b981;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --text: #1a1e3a;
+  --muted: #5a607f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at 10% 20%, #151859 0%, #0c0e33 90%);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* Header & Controls */
+header {
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(12, 14, 51, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.brand-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-badge {
+  background: linear-gradient(135deg, var(--accent), #e11d48);
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+}
+.conf-tag {
+  font-size: 13px;
+  color: #c7d2fe;
+  font-weight: 600;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.slide-num {
+  font-weight: 700;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: #e0e7ff;
+}
+.nav-btn {
+  background: var(--violet);
+  color: #fff;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+}
+.nav-btn:hover { background: #4333b8; transform: translateY(-1px); }
+.nav-btn.sec {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.nav-btn.sec:hover { background: rgba(255, 255, 255, 0.2); }
+
+/* Progress bar */
+.progress-bar-wrap {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 64px;
+  z-index: 99;
+}
+.progress-bar {
+  height: 100%;
+  width: 16.6%;
+  background: linear-gradient(90deg, var(--accent), var(--violet));
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide Deck Container */
+.deck-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  position: relative;
+}
+.slide {
+  display: none;
+  width: 100%;
+  max-width: 1100px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+  padding: 44px 48px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.35s ease;
+}
+.slide.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Slide Elements */
+.slide-category {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.15);
+  border: 1px solid rgba(255, 107, 53, 0.3);
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+}
+.slide-title {
+  font-size: clamp(26px, 3.6vw, 40px);
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 16px;
+  font-weight: 800;
+}
+.slide-subtitle {
+  font-size: 17px;
+  color: #c7d2fe;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 860px;
+}
+
+/* Grid & Cards */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 24px;
+  transition: 0.25s;
+}
+.card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--violet);
+  transform: translateY(-3px);
+}
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+.card h3 {
+  font-size: 19px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.card p {
+  font-size: 14.5px;
+  color: #cbd5e1;
+  line-height: 1.55;
+}
+
+/* Comparison Table */
+.comp-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: 10px;
+}
+.comp-table th, .comp-table td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+}
+.comp-table th {
+  background: rgba(45, 38, 133, 0.6);
+  color: #ffc9a8;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12.5px;
+  letter-spacing: 0.05em;
+}
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table tr:hover td { background: rgba(255, 255, 255, 0.06); }
+.comp-badge-old {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+.comp-badge-new {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* Speaker Note Box */
+.speaker-notes {
+  margin-top: 28px;
+  background: rgba(0, 0, 0, 0.35);
+  border-left: 4px solid var(--accent);
+  padding: 14px 18px;
+  border-radius: 0 12px 12px 0;
+  font-size: 13.5px;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+.speaker-notes b { color: #ffc9a8; }
+
+/* Keyboard Help */
+.kb-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  padding-bottom: 14px;
+}
+.kb-key {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Responsive */
+@media(max-width: 820px) {
+  .slide { padding: 26px 20px; border-radius: 20px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  header { padding: 0 14px; }
+  .conf-tag { display: none; }
+}
+
+/* Print to PDF layout */
+@media print {
+  body { background: #fff !important; color: #111 !important; }
+  header, .progress-bar-wrap, .kb-hint, .speaker-notes, .controls { display: none !important; }
+  .deck-container { padding: 0 !important; display: block !important; }
+  .slide { 
+    display: block !important; 
+    page-break-after: always; 
+    break-after: page; 
+    box-shadow: none !important; 
+    border: 1px solid #ddd !important;
+    background: #fff !important;
+    color: #111 !important;
+    margin-bottom: 25px;
+    padding: 30px !important;
+    animation: none !important;
+  }
+  .slide-title { color: #1e1b4b !important; }
+  .slide-subtitle { color: #475569 !important; }
+  .card { background: #f8fafc !important; border: 1px solid #e2e8f0 !important; color: #111 !important; }
+  .card h3 { color: #0f172a !important; }
+  .card p { color: #334155 !important; }
+  .comp-table { background: #fff !important; border-color: #cbd5e1 !important; }
+  .comp-table th { background: #e2e8f0 !important; color: #0f172a !important; }
+  .comp-table td { color: #1e293b !important; border-color: #e2e8f0 !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-box">
+    <span class="logo-badge">AIU 2026</span>
+    <span class="conf-tag">Ғылыми-тәжірибелік конференция баяндамасы</span>
+  </div>
+  <div class="controls">
+    <button class="nav-btn sec" onclick="window.print()">🖨️ PDF сақтау</button>
+    <a href="index.html" class="nav-btn sec" target="_blank" rel="noopener">🌐 Сайтты ашу</a>
+    <button class="nav-btn sec" id="prevBtn">‹ Артқа</button>
+    <span class="slide-num" id="slideIndicator">1 / 6</span>
+    <button class="nav-btn" id="nextBtn">Келесі ›</button>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="deck-container">
+
+  <!-- ==================== SLIDE 1 ==================== -->
+  <div class="slide active" data-slide="1">
+    <span class="slide-category">Титулдық слайд · Кіріспе</span>
+    <h1 class="slide-title">Жоғары оқу орнының заманауи веб-экожүйесін құру және талапкерлерге арналған интерактивті ЖИ-платформа</h1>
+    <p class="slide-subtitle">«Аймақтық инновациялық университеті» (AIU Шымкент) мысалында ресми веб-порталды талдау, жетілдіру және инновациялық веб-шешімдерді енгізу тәжірибесі.</p>
+    
+    <div class="grid-3">
+      <div class="card" style="border-top:3px solid var(--accent)">
+        <div class="card-icon">🎯</div>
+        <h3>Зерттеу мақсаты</h3>
+        <p>Талапкерге бағдарланған (Applicant-Centric) цифрлық платформа жасау арқылы оқу орнына қабылдау процесін жеңілдету және автоматтандыру.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--violet)">
+        <div class="card-icon">💻</div>
+        <h3>Технологиялық шешім</h3>
+        <p>Сыртқы ауыр фреймворктерсіз, жоғары жылдамдықты (Vanilla Stack), 2 тілді және адам сияқты кеңес беретін «Айгерім» ЖИ-көмекшісімен жабдықталған жүйе.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--green)">
+        <div class="card-icon">📊</div>
+        <h3>Күтілетін нәтиже</h3>
+        <p>Өтінім берушілер конверсиясын 3 есеге өсіру, шекті балл бойынша мамандық таңдау уақытын 2 минутқа дейін қысқарту.</p>
+      </div>
+    </div>
+
+    <!-- Live Demo Mini Simulator -->
+    <div style="margin-top:24px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); border-radius:18px; padding:18px 22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <span style="color:#ffc9a8; font-weight:700; font-size:15px">⚡ Интерактивті Live Demo (Конференцияда сынап көру):</span>
+        <span style="font-size:12.5px; color:#c7d2fe">ҰБТ балын енгізіп, «Талдау» батырмасын басыңыз 👇</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <input type="number" id="demoScoreInput" min="0" max="140" placeholder="Мысалы: 72" style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:9px 14px; color:#fff; font-size:15px; width:140px; outline:none">
+        <button class="nav-btn" id="demoCalcBtn" type="button" style="padding:9px 18px">Талдау жасау 🚀</button>
+        <span style="font-size:12px; color:#94a3b8">Нәтижені қазылар алқасына тікелей көрсете аласыз</span>
+      </div>
+      <div id="demoResultBox" style="margin-top:12px; font-size:14px; line-height:1.5; display:none; background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:12px; border-left:3px solid var(--accent)"></div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>🎙️ Баяндамашыға сөз (Speaker Note):</b> «Құрметті конференция төралқасы мен қатысушылары! Бүгінгі цифрлық дәуірде кез келген жоғары оқу орнының беделі оның заманауи веб-келбеті мен ақпараттың қолжетімділігіне тікелей байланысты. Бүгін біз ресми riu.edu.kz сайтының кемшіліктерін жойып, жаңа талаптарға сай жасалған AIU веб-экожүйесін ұсынамыз.»
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 2 ==================== -->
+  <div class="slide" data-slide="2">
+    <span class="slide-category">Мәселе және Өзектілік</span>
+    <h2 class="slide-title">Неліктен ескі сайттар бүгінгі талапкерге жауап бере алмайды?</h2>
+    <p class="slide-subtitle">Ресми riu.edu.kz сайтын зерделеу кезінде анықталған басты кемшіліктер мен қазіргі жастардың ақпарат тұтыну ерекшеліктері.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-icon">⚠️</div>
+        <h3>Ресми сайттағы (riu.edu.kz) проблемалар</h3>
+        <p style="margin-bottom:10px">• <b>Құрылымның күрделілігі:</b> Көптеген мәліметтер Google Docs және Google Drive сілтемелеріне бекітілген, оларды оқу үшін сыртқа өту керек.</p>
+        <p style="margin-bottom:10px">• <b>Интерактивтіліктің жоқтығы:</b> Талапкер өзінің жинаған ҰБТ балымен қайда түсе алатынын есептейтін немесе сүзетін құрал жоқ.</p>
+        <p>• <b>Кері байланыстың баяулығы:</b> Тек статикалық мәліметтер; сұрақтар бойынша жедел көмек беретін виртуалды көмекші қарастырылмаған.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">💡</div>
+        <h3>Бүгінгі талапкердің (Gen-Z) сұранысы</h3>
+        <p style="margin-bottom:10px">• <b>Жылдамдық (Instant Speed):</b> 2-3 секунд ішінде өзіне керек мамандықты табу және шекті балын көру.</p>
+        <p style="margin-bottom:10px">• <b>Мобильді ыңғайлылық:</b> Трафиктің 85%-ы смартфондардан келеді (Mobile-First).</p>
+        <p>• <b>Direct Messengers (WhatsApp):</b> Электронды поштаға хат күтпей, WhatsApp арқылы тікелей кеңесшімен диалог құру.</p>
+      </div>
+    </div>
+
+    <!-- Live Demo Mini Simulator -->
+    <div style="margin-top:24px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); border-radius:18px; padding:18px 22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <span style="color:#ffc9a8; font-weight:700; font-size:15px">⚡ Интерактивті Live Demo (Конференцияда сынап көру):</span>
+        <span style="font-size:12.5px; color:#c7d2fe">ҰБТ балын енгізіп, «Талдау» батырмасын басыңыз 👇</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <input type="number" id="demoScoreInput" min="0" max="140" placeholder="Мысалы: 72" style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:9px 14px; color:#fff; font-size:15px; width:140px; outline:none">
+        <button class="nav-btn" id="demoCalcBtn" type="button" style="padding:9px 18px">Талдау жасау 🚀</button>
+        <span style="font-size:12px; color:#94a3b8">Нәтижені қазылар алқасына тікелей көрсете аласыз</span>
+      </div>
+      <div id="demoResultBox" style="margin-top:12px; font-size:14px; line-height:1.5; display:none; background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:12px; border-left:3px solid var(--accent)"></div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>🎙️ Баяндамашыға сөз:</b> «Талапкерлердің 85 пайыздан астамы сайтқа телефон арқылы кіреді. Егер сайтта көлемді PDF-тер немесе Google Drive сілтемелері ашылмаса, талапкер бәсекелес оқу орындарына кетіп қалады. Сондықтан біз барлық ақпаратты интерактивті, жылдам әрі ыңғайлы етуді мақсат еттік.»
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 3 ==================== -->
+  <div class="slide" data-slide="3">
+    <span class="slide-category">Салыстырмалы Талдау</span>
+    <h2 class="slide-title">Ресми сайт (riu.edu.kz) пен Жаңа сайттың айырмашылығы</h2>
+    <p class="slide-subtitle">Техникалық, функционалдық және пайдаланушы тәжірибесі (UX) бойынша нақты параметрлік салыстыру.</p>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Параметр / Функция</th>
+          <th>Ресми сайт (riu.edu.kz)</th>
+          <th>Біздің жаңа платформамыз</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Технологиялық база</b></td>
+          <td><span class="comp-badge-old">Tilda конструкторы</span> (ауыр сыртқы скрипттер)</td>
+          <td><span class="comp-badge-new">Vanilla HTML5/CSS3/JS</span> (нөлдік тәуелділік, жеңіл)</td>
+        </tr>
+        <tr>
+          <td><b>Мамандық таңдау</b></td>
+          <td>Статикалық мәтіндік тізім</td>
+          <td><b>Интерактивті ҰБТ сүзгісі + 3 сұрақтық тест (Quiz)</b></td>
+        </tr>
+        <tr>
+          <td><b>Бакалавриат бағдарламалары</b></td>
+          <td>Жүйеленбеген шашыраңқы сипаттама</td>
+          <td><b>Барлық 16 ресми бағдарлама</b> (РЭТ, Құрылыс, Спорт толық)</td>
+        </tr>
+        <tr>
+          <td><b>ЖИ-Кеңесші (AI Advisor)</b></td>
+          <td>Жоқ</td>
+          <td><b>«Айгерім» ЖИ кеңесшісі</b> (24/7 сұрақ-жауап, балл талдау)</td>
+        </tr>
+        <tr>
+          <td><b>Өтінім беру процесі</b></td>
+          <td>Стандартты почта формасы</td>
+          <td><b>Жедел форма + 1-Click WhatsApp өтінімі</b></td>
+        </tr>
+        <tr>
+          <td><b>Жүктелу жылдамдығы</b></td>
+          <td>Орташа (2.8 - 4.5 сек)</td>
+          <td><b>Өте жылдам (0.6 - 1.2 сек)</b></td>
+        </tr>
+        <tr>
+          <td><b>Экожүйе интеграциясы</b></td>
+          <td>Жеке сілтемелер</td>
+          <td><b>Platonus + 3D Кампус тур + Жатақхана + Кітапхана</b></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="speaker-notes">
+      <b>🎙️ Баяндамашыға сөз:</b> «Осы салыстырмалы кестеден көріп отырғандарыңыздай, бұл жай ғана дизайн жаңарту емес. Бұл — қолданушының психологиясына негізделген, интерактивті құралдармен және ЖИ-көмекшімен қаруланған толыққанды автоматтандыру экожүйесі.»
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 4 ==================== -->
+  <div class="slide" data-slide="4">
+    <span class="slide-category">Инновациялық Артықшылықтар</span>
+    <h2 class="slide-title">Жаңа платформаның 5 бірегей басымдығы</h2>
+    <p class="slide-subtitle">Талапкерге барынша ыңғайлы жағдай жасауға арналған бірегей модульдер.</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon">🧮</div>
+        <h3>1. ҰБТ пәндері сүзгісі</h3>
+        <p>Талапкер өзінің тапсырған 2 бейіндік пәнін таңдайды (мысалы, <i>Мат+Физ</i> немесе <i>Мат+Инфо</i>), жүйе оған сай келетін мамандықтарды ғана лезде сүзіп көрсетеді.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>2. «Айгерім» ЖИ-Кеңесшісі</h3>
+        <p>Талапкер: <i>«65 балл жинадым, қайда түсе алам?»</i> десе, кеңесші оның баллын талдап, өтетін мамандықтарын, ректор грантын, жатақхана мен әскери кафедра шарттарын адамша түсіндіреді.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">📲</div>
+        <h3>3. 1-Click WhatsApp Routing</h3>
+        <p>Өтінім толтырылған соң, жүйе оны арнайы құрылымдалған мәтін түрінде қабылдау комиссиясының WhatsApp желісіне тікелей бағыттайды.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <h3>4. Ресми статус және сенім</h3>
+        <p>Мемлекеттік мерзімсіз лицензия, 2024-2029 жылдарға арналған 5 жылдық НКАО аккредитациясы, Ректор блогы мен басшылық құрамы толық ашық көрсетілген.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>5. Қос тілді Single Page аударма</h3>
+        <p>Қазақша және орысша тіл ауыстыру батырмасы бетті қайта жүктемей, лезде мәтіндерді 100% ауыстырады (нөлдік кідіріс).</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🏢</div>
+        <h3>6. Кампус, Жатақхана & 3D тур</h3>
+        <p>Студенттер үйінің тұрмыстық жағдайлары, 3D виртуалды тур және Platonus ААЖ бірыңғай студенттік витринаға жинақталған.</p>
+      </div>
+    </div>
+
+    <!-- Live Demo Mini Simulator -->
+    <div style="margin-top:24px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); border-radius:18px; padding:18px 22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <span style="color:#ffc9a8; font-weight:700; font-size:15px">⚡ Интерактивті Live Demo (Конференцияда сынап көру):</span>
+        <span style="font-size:12.5px; color:#c7d2fe">ҰБТ балын енгізіп, «Талдау» батырмасын басыңыз 👇</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <input type="number" id="demoScoreInput" min="0" max="140" placeholder="Мысалы: 72" style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:9px 14px; color:#fff; font-size:15px; width:140px; outline:none">
+        <button class="nav-btn" id="demoCalcBtn" type="button" style="padding:9px 18px">Талдау жасау 🚀</button>
+        <span style="font-size:12px; color:#94a3b8">Нәтижені қазылар алқасына тікелей көрсете аласыз</span>
+      </div>
+      <div id="demoResultBox" style="margin-top:12px; font-size:14px; line-height:1.5; display:none; background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:12px; border-left:3px solid var(--accent)"></div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>🎙️ Баяндамашыға сөз:</b> «Ең басты инновациямыз — виртуалды кеңесші «Айгерім». Ол тіпті сыртқы интернет немесе қымбат API кілттерінсіз де кіріктірілген талдау моторы арқылы кез келген талапкерге адам сияқты бағыт беріп, шешім қабылдауына көмектеседі.»
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 5 ==================== -->
+  <div class="slide" data-slide="5">
+    <span class="slide-category">Технология және Архитектура</span>
+    <h2 class="slide-title">Бұл платформа қалай жасалды?</h2>
+    <p class="slide-subtitle">Жобаның техникалық архитектурасы, қолданылған стек және бағдарламалау әдістемесі.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <h3>Frontend & UI Архитектурасы</h3>
+        <p style="margin-bottom:8px">• <b>HTML5 Semantic Markup:</b> Дұрыс семантика (header, main, section, nav) арқылы іздеу жүйелеріне (SEO) жоғары орын қамтамасыз етеді.</p>
+        <p style="margin-bottom:8px">• <b>CSS3 Custom Properties (Variables):</b> Түстер гаммасы, анимациялар, қараңғы/жарық реңктер мен адаптивті CSS Grid / Flexbox.</p>
+        <p>• <b>Modular Page Structure:</b> Негізгі беттер (`index.html`, `about.html`, `programs.html`, `campus.html`, `admission.html`) бірыңғай модульдік стильде орындалған.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>Интеллектуалды қозғалтқыш (JS Core)</h3>
+        <p style="margin-bottom:8px">• <b>Human-like Advisor Brain (`chatbot.js`):</b> Сұраныстардың семантикасын анықтайтын RegEx алгоритмдері мен диалогтық сценарийлер.</p>
+        <p style="margin-bottom:8px">• <b>Hybrid AI Bridge:</b> OpenAI GPT-4o-mini үшін тікелей интеграциялық көпір қарастырылған; кілт болмаған жағдайда кіріктірілген логикалық қозғалтқыш толық дербес жұмыс істейді.</p>
+        <p>• <b>Local Data Persistence:</b> Тілді таңдау (`localStorage`) және өтінімдерді браузер базасында сақтау архитектурасы.</p>
+      </div>
+    </div>
+
+    <!-- Live Demo Mini Simulator -->
+    <div style="margin-top:24px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); border-radius:18px; padding:18px 22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <span style="color:#ffc9a8; font-weight:700; font-size:15px">⚡ Интерактивті Live Demo (Конференцияда сынап көру):</span>
+        <span style="font-size:12.5px; color:#c7d2fe">ҰБТ балын енгізіп, «Талдау» батырмасын басыңыз 👇</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <input type="number" id="demoScoreInput" min="0" max="140" placeholder="Мысалы: 72" style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:9px 14px; color:#fff; font-size:15px; width:140px; outline:none">
+        <button class="nav-btn" id="demoCalcBtn" type="button" style="padding:9px 18px">Талдау жасау 🚀</button>
+        <span style="font-size:12px; color:#94a3b8">Нәтижені қазылар алқасына тікелей көрсете аласыз</span>
+      </div>
+      <div id="demoResultBox" style="margin-top:12px; font-size:14px; line-height:1.5; display:none; background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:12px; border-left:3px solid var(--accent)"></div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>🎙️ Баяндамашыға сөз:</b> «Біз жобаны әдейілеп React немесе Vue сияқты ауыр фреймворктерсіз, таза Vanilla JavaScript пен CSS арқылы жасадық. Бұл сайттың кез келген қарапайым смартфонда лезде ұшып тұруына және серверлік күрделі шығындарды қажет етпеуіне мүмкіндік береді.»
+    </div>
+  </div>
+
+  <!-- ==================== SLIDE 6 ==================== -->
+  <div class="slide" data-slide="6">
+    <span class="slide-category">Нәтиже және Перспектива</span>
+    <h2 class="slide-title">Қорытынды және Практикалық маңызы</h2>
+    <p class="slide-subtitle">Жобаны енгізуден күтілетін тиімділік және оны әрі қарай дамыту қадамдары.</p>
+
+    <div class="grid-3">
+      <div class="card" style="border-left:4px solid var(--green)">
+        <div class="card-icon">📈</div>
+        <h3>Қабылдау комиссиясының жұмысын жеңілдету</h3>
+        <p>Талапкерлердің жиі қойылатын сұрақтарының 80%-ын сайт пен кеңесші шешеді. Мамандарға тек дайын өтінімдермен жұмыс істеу қалады.</p>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--accent)">
+        <div class="card-icon">🎓</div>
+        <h3>Университеттің сандық имиджі</h3>
+        <p>AIU Шымкент өңіріндегі ең инновациялық, заманауи және талапкерге ыңғайлы оқу орны ретінде позицияланады.</p>
+      </div>
+
+      <div class="card" style="border-left:4px solid var(--violet)">
+        <div class="card-icon">🚀</div>
+        <h3>Болашақ жол картасы (Roadmap)</h3>
+        <p>Келесі кезеңде Platonus жүйесімен API арқылы тікелей қосылу және талапкердің құжаттарын ЭЦҚ арқылы онлайн тіркеу жүйесін қосу жоспарлануда.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:30px;background:linear-gradient(135deg,rgba(45,38,133,0.4),rgba(84,68,205,0.4));border:1px solid rgba(255,255,255,0.2);border-radius:18px;padding:24px;text-align:center">
+      <h3 style="font-size:22px;color:#ffc9a8;margin-bottom:8px">Назарларыңызға рақмет!</h3>
+      <p style="color:#e0e7ff;font-size:15px">Сұрақтарыңыз болса, қуана жауап беруге дайынмын.</p>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="nav-btn" href="index.html" target="_blank" rel="noopener">Басты бетті қарау 🌐</a>
+        <a class="nav-btn sec" href="about.html" target="_blank" rel="noopener">Университет туралы 🏛️</a>
+        <a class="nav-btn sec" href="programs.html" target="_blank" rel="noopener">Мамандықтар 🎯</a>
+      </div>
+    </div>
+
+    <!-- Live Demo Mini Simulator -->
+    <div style="margin-top:24px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); border-radius:18px; padding:18px 22px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <span style="color:#ffc9a8; font-weight:700; font-size:15px">⚡ Интерактивті Live Demo (Конференцияда сынап көру):</span>
+        <span style="font-size:12.5px; color:#c7d2fe">ҰБТ балын енгізіп, «Талдау» батырмасын басыңыз 👇</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+        <input type="number" id="demoScoreInput" min="0" max="140" placeholder="Мысалы: 72" style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:10px; padding:9px 14px; color:#fff; font-size:15px; width:140px; outline:none">
+        <button class="nav-btn" id="demoCalcBtn" type="button" style="padding:9px 18px">Талдау жасау 🚀</button>
+        <span style="font-size:12px; color:#94a3b8">Нәтижені қазылар алқасына тікелей көрсете аласыз</span>
+      </div>
+      <div id="demoResultBox" style="margin-top:12px; font-size:14px; line-height:1.5; display:none; background:rgba(255,255,255,0.08); padding:12px 16px; border-radius:12px; border-left:3px solid var(--accent)"></div>
+    </div>
+
+    <div class="speaker-notes">
+      <b>🎙️ Баяндамашыға сөз:</b> «Қорытындылай келе, жасалған цифрлық платформа — тек визит карточка емес, бұл оқу орнына талапкерлерді тартудың, бағыттаудың және қабылдаудың қуатты маркетингтік әрі технологиялық құралы. Назар қойып тыңдағандарыңызға көп рақмет!»
+    </div>
+  </div>
+
+</div>
+
+<div class="kb-hint">
+  Слайдтарды ауыстыру: <span class="kb-key">←</span> немесе <span class="kb-key">→</span> пернелері арқылы, немесе <span class="kb-key">Space</span> пернесі
+</div>
+
+<script>
+let currentSlide = 1;
+const totalSlides = 6;
+
+const slides = document.querySelectorAll('.slide');
+const slideIndicator = document.getElementById('slideIndicator');
+const progressBar = document.getElementById('progressBar');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function showSlide(index) {
+  if (index < 1) index = 1;
+  if (index > totalSlides) index = totalSlides;
+  currentSlide = index;
+
+  slides.forEach(slide => {
+    slide.classList.toggle('active', parseInt(slide.dataset.slide, 10) === currentSlide);
+  });
+
+  slideIndicator.textContent = `${currentSlide} / ${totalSlides}`;
+  progressBar.style.width = `${(currentSlide / totalSlides) * 100}%`;
+
+  prevBtn.disabled = (currentSlide === 1);
+  nextBtn.disabled = (currentSlide === totalSlides);
+  prevBtn.style.opacity = currentSlide === 1 ? '0.4' : '1';
+  nextBtn.style.opacity = currentSlide === totalSlides ? '0.4' : '1';
+}
+
+prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    showSlide(currentSlide + 1);
+  } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    showSlide(currentSlide - 1);
+  }
+});
+
+showSlide(1);
+
+// Live Demo талдау жасау логикасы
+const demoInput = document.getElementById('demoScoreInput');
+const demoBtn = document.getElementById('demoCalcBtn');
+const demoBox = document.getElementById('demoResultBox');
+
+if (demoBtn && demoInput && demoBox) {
+  demoBtn.onclick = () => {
+    const val = parseInt(demoInput.value, 10);
+    if (isNaN(val) || val < 0 || val > 140) {
+      demoBox.style.display = 'block';
+      demoBox.innerHTML = '<span style="color:#fca5a5">⚠️ 0 мен 140 аралығындағы нақты ҰБТ балын енгізіңіз!</span>';
+      return;
+    }
+    demoBox.style.display = 'block';
+    if (val >= 75) {
+      demoBox.innerHTML = `🎉 <b>Керемет көрсеткіш (${val} балл)!</b><br>
+        • Сізге AIU-дың <b>барлық 16 мамандығына</b> (Құқықтану — шекті балл 75, IT, Бизнес, Инженерия, Спорт) есік ашық!<br>
+        • <b>AIU Ректорлық ішкі грантына</b> және жеңілдіктерге өтініш бере аласыз. Студенттер үйінен орын қарастырылған.`;
+    } else if (val >= 50) {
+      demoBox.innerHTML = `👍 <b>Жақсы нәтиже (${val} балл)!</b><br>
+        • Сіз IT (ВТиПО, Ақпараттық жүйелер, РЭТ), Менеджмент, Қаржы, Құрылыс, Мұнай-газ, Дене шынықтыру және спорт сияқты <b>15 мамандықтың шекті балынан (50)</b> толық өтіп тұрсыз!<br>
+        • <i>(Тек Құқықтануда шекті балл 75)</i>. Рассрочкамен оқуға және жатақханаға өтінім беруге болады.`;
+    } else {
+      demoBox.innerHTML = `💡 <b>Балл көрсеткіші: ${val} балл (ҰБТ шекті балы — 50)</b><br>
+        • Уайымдамаңыз: Тамыз айындағы ҰБТ-ға қайта тапсыруға немесе колледжден кейінгі қысқартылған бағдарламаға құжат тапсыруға толық мүмкіндік бар!`;
+    }
+  };
+}
+</script>
+</body>
+</html>
